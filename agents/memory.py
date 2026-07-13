@@ -16,6 +16,7 @@ import hashlib
 import json
 import re
 import time
+import os
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -49,7 +50,8 @@ class MemoryEntry:
 
 def _project_hash() -> str:
     """用当前工作目录生成稳定 hash，让不同项目的记忆互相隔离。"""
-    return hashlib.sha256(str(Path.cwd()).encode()).hexdigest()[:16]
+    normalized = os.path.normcase(str(Path.cwd().resolve()))
+    return hashlib.sha256(normalized.encode()).hexdigest()[:16]
 
 
 def get_memory_dir() -> Path:
