@@ -14,9 +14,9 @@ from __future__ import annotations
 import asyncio
 import hashlib
 import json
+import os
 import re
 import time
-import os
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -49,7 +49,8 @@ class MemoryEntry:
 
 
 def _project_hash() -> str:
-    """用当前工作目录生成稳定 hash，让不同项目的记忆互相隔离。"""
+    """用平台规范化后的当前目录生成稳定 hash，隔离不同项目的记忆。"""
+    # Windows 路径大小写不敏感；哈希前规范化可避免 Code/code 被拆成两个记忆目录。
     normalized = os.path.normcase(str(Path.cwd().resolve()))
     return hashlib.sha256(normalized.encode()).hexdigest()[:16]
 
